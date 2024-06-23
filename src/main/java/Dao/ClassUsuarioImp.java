@@ -1,20 +1,33 @@
 package Dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+
 import Interfaces.IUsuario;
 import model.TblUsuariocl2;
 
 public class ClassUsuarioImp implements IUsuario {
 
 	@Override
-	public void RegistrarUsuario(TblUsuariocl2 usuario) {
-		// TODO Auto-generated method stub
-		
-	}//fin del metodo registrar
-	
-	@Override
-	public void ValidarUsuario(TblUsuariocl2 usuario) {
-		// TODO Auto-generated method stub
-		
-	}//fin del metodo VALIDAR USUARIO
+	public TblUsuariocl2 validarUsuario(String usuario, String password) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("LPII_CL2_SOTELOCORDOVADIEGO");
+        EntityManager em = emf.createEntityManager();
+        try{
+            TypedQuery<TblUsuariocl2> query = em.createQuery(
+                    "SELECT u FROM TblUsuariocl2 u WHERE u.usuariocl2 = :usuario AND u.passwordcl2 = :password",TblUsuariocl2.class);
+            query.setParameter("usuario", usuario);
+            query.setParameter("password", password);
 
+            return query.getSingleResult();
+        }//fin del try
+        catch(NoResultException e){
+            return null;
+        }//fin del catch
+        finally{
+            em.close();
+        }		
+	}
 }
